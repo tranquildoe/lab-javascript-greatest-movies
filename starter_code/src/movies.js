@@ -68,17 +68,33 @@ function ratesAverage(array) {
   movieRates = array.map(array => array.rate);  
 
   function getSum(a, b) { 
-    if (isNaN(a)) {
-      a = 0;
+    if (isNaN(b)) {
+     return a;
     }
 
     return a + b;
   }
 
-  let average = (movieRates.reduce(getSum) / movieRates.length);
-  average = +average.toFixed(2);
+  let average = (movieRates.reduce(getSum, 0) / movieRates.length);
+  average = Number(average.toFixed(2));
 
   return average;
+
+// Franck's version:
+//
+// function ratesAverage(movies) {
+
+//    if (!movies.length) return 0;
+
+//    movies.reduce(acc,movie) => {
+//    return (acc += movie.rate)
+//     }, 0);
+
+//    const avg = sum / movies.length;
+//    const rounded = Number(avg.toFixed(2));
+
+// }
+
 }
 
 // Iteration 5: Drama movies - Get the average of Drama Movies
@@ -87,10 +103,17 @@ function dramaMoviesRate(array) {
   let dramaRates = array.filter(array => array.genre.includes("Drama"));
 
   let dramaAverage = ratesAverage(dramaRates);
-  dramaAverage = +dramaAverage.toFixed(2);
 
   return dramaAverage;
 }
+
+// Franck's version (same as mine!!) :
+
+// function dramaMoviesRate(movies) {
+//   const dramaMovies = movies.filter(movie => movie.genre.includes("Drama"));
+//   const average = ratesAverage(dramaMovies)
+//   return average;
+// }
 
 // Iteration 6: Time Format - Turn duration of the movies from hours to minutes
 
@@ -130,4 +153,39 @@ function turnHoursToMinutes(array) {
   return movieDuration;
 }
 
+//Franck's version:
+
+// function turnHoursToMinutes(movies) {
+//   const modifiedDuration = movies.map(movie => {
+//     const copy = {...movie};
+//     const time = movie.duration.split(" ");    //So we can split it between min/hrs;
+//     let duration;
+//     if(time.length > 1) {                       //check we have an array of length 2 so we are sure we have hours AND minutes;
+//       duration = parseFloat(time[0]) * 60 + parseFloat(time[1]);
+//     } else if (time[0].includes("h")) duration = parseFloat(time[0]) * 60;
+//     else duration = parseFloat(time[0]);
+//     movie.duration = duration;
+//     return movie;
+//   })
+//   return modifiedDuration
+// }
+
 // BONUS Iteration: Best yearly rate average - Best yearly rate average
+//
+//Franck's version :
+//function bestYearAvg(movies) {
+//   if (!movies.length) return null;
+//   const yeardObj = movies.reduce((acc, movie) => {
+//     if (acc[movie.year]) acc[movie.year].push({ rate: movie.rate });
+//     else acc[movie.year] = [{ rate: movie.rate }];
+//     return acc;
+//   }, {});
+// ​
+//   let best =  {bestYear: 0, avg: 0}
+//   for(let key in yeardObj ){
+//       let avg = ratesAverage(yeardObj[key]);
+//       if(avg > best.avg) best = {bestYear: key, avg: avg}
+//   }
+//   return `The best year was ${best.bestYear} with an average rate of ${best.avg}`
+// ​
+// }

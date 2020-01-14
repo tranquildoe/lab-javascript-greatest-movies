@@ -15,7 +15,6 @@ function orderByYear(movies) {
   });
 
   return newMovies;
-  console.log(newMovies);
 }
 
 // orderByYear(movies);
@@ -49,10 +48,8 @@ function orderAlphabetically(movies) {
         return 0;
     });
 
-    console.log(movieTitles);
 
     const top20= movieTitles.slice(0,20);
-    console.log(top20);
     return top20;
 }
 
@@ -117,41 +114,77 @@ function dramaMoviesRate(array) {
 
 // Iteration 6: Time Format - Turn duration of the movies from hours to minutes
 
-function turnHoursToMinutes(array) {
-
-  let movieDuration = [...array];
-  
-  function convertTime(string) {
-
-    let durationInMinutes = 0;
-    let hoursDigits = 0;
-    let minutesDigits = 0;
-    let numberOfHours = 0;      
-    let numberOfMinutes = 0;
-
-    for (let i = 0 ; i < string.length ; i++) {
-
-      if (string[i] === 'h') {
-        hoursDigits = i;
-        numberOfHours = string.substring(i-hoursDigits, i);
-      }
-
-      if (string[i] === 'm') {
-        minutesDigits = i;
-        numberOfMinutes = string.substring(i-minutesDigits, i);
-        break;
-      }
-    }
+function turnHoursToMinutes(movies) {
     
-    durationInMinutes = (numberOfHours * 60) + numberOfMinutes;
+  let movieDuration = movies.map(movie => movie.duration.split(' '));
+  let timeInMinutes = [];
 
-    return durationInMinutes;
+  for (let i = 0 ; i < movieDuration.length ; i++) {
+
+    let hours = 0;
+    let minutes = 0;
+
+    if (movieDuration[i][0].includes("h")) {
+      hours = (movieDuration[i][0]).substring(0, movieDuration[i][0].length-1);
+    }
+
+    if (!movieDuration[i][0].includes("h")) {  
+      minutes = (movieDuration[i][0]).substring(0, movieDuration[i][0].length-3);
+
+    } else if (movieDuration[i].length > 1) {
+      minutes = movieDuration[i][1].substring(0, movieDuration[i][1].length-3)
+    };
+
+    timeInMinutes.push(Number(hours * 60 + Number(minutes)));
   }
 
-  movieDuration = movieDuration.map(convertTime(movieDuration.duration));
+  let moviesInMinutes = [...movies];
 
-  return movieDuration;
+  for (let i=0; i< moviesInMinutes.length; i++) {
+    moviesInMinutes[i].duration = Number(timeInMinutes[i]);
+  }
+
+  console.log(typeof moviesInMinutes[0].duration)
+  return moviesInMinutes;
 }
+
+
+//My former attempt
+// function turnHoursToMinutes(array) {
+
+//   let movieDuration = [...array];
+  
+//   function convertTime(string) {
+
+//     let durationInMinutes = 0;
+//     let hoursDigits = 0;
+//     let minutesDigits = 0;
+//     let numberOfHours = 0;      
+//     let numberOfMinutes = 0;
+
+//     for (let i = 0 ; i < string.length ; i++) {
+
+//       if (string[i] === 'h') {
+//         hoursDigits = i;
+//         numberOfHours = string.substring(i-hoursDigits, i);
+//       }
+
+//       if (string[i] === 'm') {
+//         minutesDigits = i;
+//         numberOfMinutes = string.substring(i-minutesDigits, i);
+//         break;
+//       }
+//     }
+    
+//     durationInMinutes = (numberOfHours * 60) + numberOfMinutes;
+
+//     return durationInMinutes;
+//   }
+
+//   movieDuration = movieDuration.map(convertTime(movieDuration.duration));
+
+//   return movieDuration;
+// }
 
 //Franck's version:
 

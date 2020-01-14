@@ -15,7 +15,6 @@ function orderByYear(movies) {
   });
 
   return newMovies;
-  console.log(newMovies);
 }
 
 // orderByYear(movies);
@@ -49,10 +48,8 @@ function orderAlphabetically(movies) {
         return 0;
     });
 
-    console.log(movieTitles);
 
     const top20= movieTitles.slice(0,20);
-    console.log(top20);
     return top20;
 }
 
@@ -68,17 +65,33 @@ function ratesAverage(array) {
   movieRates = array.map(array => array.rate);  
 
   function getSum(a, b) { 
-    if (isNaN(a)) {
-      a = 0;
+    if (isNaN(b)) {
+     return a;
     }
 
     return a + b;
   }
 
-  let average = (movieRates.reduce(getSum) / movieRates.length);
-  average = +average.toFixed(2);
+  let average = (movieRates.reduce(getSum, 0) / movieRates.length);
+  average = Number(average.toFixed(2));
 
   return average;
+
+// Franck's version:
+//
+// function ratesAverage(movies) {
+
+//    if (!movies.length) return 0;
+
+//    movies.reduce(acc,movie) => {
+//    return (acc += movie.rate)
+//     }, 0);
+
+//    const avg = sum / movies.length;
+//    const rounded = Number(avg.toFixed(2));
+
+// }
+
 }
 
 // Iteration 5: Drama movies - Get the average of Drama Movies
@@ -87,47 +100,125 @@ function dramaMoviesRate(array) {
   let dramaRates = array.filter(array => array.genre.includes("Drama"));
 
   let dramaAverage = ratesAverage(dramaRates);
-  dramaAverage = +dramaAverage.toFixed(2);
 
   return dramaAverage;
 }
 
+// Franck's version (same as mine!!) :
+
+// function dramaMoviesRate(movies) {
+//   const dramaMovies = movies.filter(movie => movie.genre.includes("Drama"));
+//   const average = ratesAverage(dramaMovies)
+//   return average;
+// }
+
 // Iteration 6: Time Format - Turn duration of the movies from hours to minutes
 
-function turnHoursToMinutes(array) {
-
-  let movieDuration = [...array];
-  
-  function convertTime(string) {
-
-    let durationInMinutes = 0;
-    let hoursDigits = 0;
-    let minutesDigits = 0;
-    let numberOfHours = 0;      
-    let numberOfMinutes = 0;
-
-    for (let i = 0 ; i < string.length ; i++) {
-
-      if (string[i] === 'h') {
-        hoursDigits = i;
-        numberOfHours = string.substring(i-hoursDigits, i);
-      }
-
-      if (string[i] === 'm') {
-        minutesDigits = i;
-        numberOfMinutes = string.substring(i-minutesDigits, i);
-        break;
-      }
-    }
+function turnHoursToMinutes(movies) {
     
-    durationInMinutes = (numberOfHours * 60) + numberOfMinutes;
+  let movieDuration = movies.map(movie => movie.duration.split(' '));
+  let timeInMinutes = [];
 
-    return durationInMinutes;
+  for (let i = 0 ; i < movieDuration.length ; i++) {
+
+    let hours = 0;
+    let minutes = 0;
+
+    if (movieDuration[i][0].includes("h")) {
+      hours = (movieDuration[i][0]).substring(0, movieDuration[i][0].length-1);
+    }
+
+    if (!movieDuration[i][0].includes("h")) {  
+      minutes = (movieDuration[i][0]).substring(0, movieDuration[i][0].length-3);
+
+    } else if (movieDuration[i].length > 1) {
+      minutes = movieDuration[i][1].substring(0, movieDuration[i][1].length-3)
+    };
+
+    timeInMinutes.push(Number(hours * 60 + Number(minutes)));
   }
 
-  movieDuration = movieDuration.map(convertTime(movieDuration.duration));
+  let moviesInMinutes = [...movies];
 
-  return movieDuration;
+  for (let i=0; i< moviesInMinutes.length; i++) {
+    moviesInMinutes[i].duration = Number(timeInMinutes[i]);
+  }
+
+  console.log(typeof moviesInMinutes[0].duration)
+  return moviesInMinutes;
 }
 
+
+//My former attempt
+// function turnHoursToMinutes(array) {
+
+//   let movieDuration = [...array];
+  
+//   function convertTime(string) {
+
+//     let durationInMinutes = 0;
+//     let hoursDigits = 0;
+//     let minutesDigits = 0;
+//     let numberOfHours = 0;      
+//     let numberOfMinutes = 0;
+
+//     for (let i = 0 ; i < string.length ; i++) {
+
+//       if (string[i] === 'h') {
+//         hoursDigits = i;
+//         numberOfHours = string.substring(i-hoursDigits, i);
+//       }
+
+//       if (string[i] === 'm') {
+//         minutesDigits = i;
+//         numberOfMinutes = string.substring(i-minutesDigits, i);
+//         break;
+//       }
+//     }
+    
+//     durationInMinutes = (numberOfHours * 60) + numberOfMinutes;
+
+//     return durationInMinutes;
+//   }
+
+//   movieDuration = movieDuration.map(convertTime(movieDuration.duration));
+
+//   return movieDuration;
+// }
+
+//Franck's version:
+
+// function turnHoursToMinutes(movies) {
+//   const modifiedDuration = movies.map(movie => {
+//     const copy = {...movie};
+//     const time = movie.duration.split(" ");    //So we can split it between min/hrs;
+//     let duration;
+//     if(time.length > 1) {                       //check we have an array of length 2 so we are sure we have hours AND minutes;
+//       duration = parseFloat(time[0]) * 60 + parseFloat(time[1]);
+//     } else if (time[0].includes("h")) duration = parseFloat(time[0]) * 60;
+//     else duration = parseFloat(time[0]);
+//     movie.duration = duration;
+//     return movie;
+//   })
+//   return modifiedDuration
+// }
+
 // BONUS Iteration: Best yearly rate average - Best yearly rate average
+//
+//Franck's version :
+//function bestYearAvg(movies) {
+//   if (!movies.length) return null;
+//   const yeardObj = movies.reduce((acc, movie) => {
+//     if (acc[movie.year]) acc[movie.year].push({ rate: movie.rate });
+//     else acc[movie.year] = [{ rate: movie.rate }];
+//     return acc;
+//   }, {});
+// ​
+//   let best =  {bestYear: 0, avg: 0}
+//   for(let key in yeardObj ){
+//       let avg = ratesAverage(yeardObj[key]);
+//       if(avg > best.avg) best = {bestYear: key, avg: avg}
+//   }
+//   return `The best year was ${best.bestYear} with an average rate of ${best.avg}`
+// ​
+// }
